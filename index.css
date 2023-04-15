@@ -1,0 +1,16 @@
+body {
+    margin: 0 auto;
+}
+
+list-members-family {
+
+}
+
+.card-body {
+    min-height: 100px;
+}
+
+.modal-body {
+    height: 300px;
+}
+
