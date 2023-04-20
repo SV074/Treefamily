@@ -16,61 +16,66 @@
 </head>
 
 <body>
-    <div class="container">
+    <div class="tree-family">
         <div class="data-member-family">
 
-        </div>
+           </div>
 
-        <div class="family d-flex justify-content-center flex-column align-items-center">
-            <h1 class="">Древо семьи</h1>
-            <div class="buttons">
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                    Добавить
-                </button>
-                <button type="button" id="clear" class="btn btn-primary">Очистить список</button>
-            </div>
-
-            <div class="list-members-family d-flex mt-2" id="list-cards">
-
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Данные</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="family d-flex justify-content-center flex-column align-items-center">
+                <h1 class="">Древо семьи</h1>
+                <div class="buttons">
+                    <button type="button" class="btn btn-primary" id="btn-open-modal">
+                        Добавить
+                    </button>
+                    <button type="button" id="clear" class="btn btn-primary">Очистить список</button>
                 </div>
-                <div class="modal-body d-flex flex-column justify-content-around align-items-start">
-                    <input class="form-control input-surname" id="surname" type="text" placeholder="Фамилия">
-                    <input class="form-control input-name" id="name" type="text" placeholder="Имя">
-                    <input class="form-control input-patronymic" id="patronymic" type="text" placeholder="Отчество">
-                    <input type="date" class="form-control input-date" id="date-born">
-                    <div class="select-gender select-parent d-flex">
-                        <select class="form-select" aria-label="Default select example">
-                            <option selected>Пол</option>
-                            <option value="1">Мужской</option>
-                            <option value="2">Женский</option>
-                        </select>
-                        <form class="form-select-parent" action="" id="form-select-parent">
-                            <select class="form-select ms-3" id="select-id-parent" aria-label="Default select example">
-                                <option disabled>Выбор id родителей</option>
-                                <option></option>
-                            </select>
-                        </form>
 
+                <ul class="list-members-family" id="list-cards">
+
+                </ul>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="editCardModal" tabindex="-1" aria-labelledby="editCardModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="editCardModalLabel">Данные</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body d-flex flex-column justify-content-around align-items-start" id="modal-body">
+                        <input class="form-control input-surname" id="surname" type="text" placeholder="Фамилия">
+                        <input class="form-control input-name" id="name" type="text" placeholder="Имя">
+                        <input class="form-control input-patronymic" id="patronymic" type="text" placeholder="Отчество">
+                        <input type="date" class="form-control input-date" id="date-born">
+                        <div class="select-gender-parent d-flex">
+                            <form class="form-select-gender" action="" id="form-select-gender">
+                                <select class="form-select" aria-label="Default select example">
+                                    <option selected>Пол</option>
+                                    <option value="1">Мужской</option>
+                                    <option value="2">Женский</option>
+                                </select>
+                            </form>
+                            <form class="form-select-parent" action="" id="form-select-parent">
+                                <select class="form-select ms-3" id="select-id-parent"
+                                    aria-label="Default select example">
+                                    <option disabled>Выбор родителей</option>
+                                    <option></option>
+                                </select>
+                            </form>
+
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                        <button type="button" class="btn btn-primary" id="btn-save-card">Сохранить</button>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-                    <button type="button" class="btn btn-primary" id="btn-add">Сохранить</button>
-                </div>
             </div>
-        </div>
+        
     </div>
+
     <script src="index.js"></script>
 </body>
 

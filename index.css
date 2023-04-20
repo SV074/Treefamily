@@ -1,9 +1,29 @@
-body {
-    margin: 0 auto;
+html {
+    
 }
 
-list-members-family {
+body {
+    margin: 0 auto;
+    max-width: auto;
+    
+}
 
+.tree-family {
+   margin: 0 auto;
+    width: 1366px;
+   
+}
+
+li {
+    list-style: none;
+}
+
+.family {
+    width: 100%;
+}
+
+.list-members-family {
+  
 }
 
 .card-body {
@@ -14,3 +34,11 @@ list-members-family {
     height: 300px;
 }
 
+.form-select-gender {
+    width: 20%;
+  
+}
+
+.hidden {
+    display: none;
+}

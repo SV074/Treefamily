@@ -2,17 +2,19 @@ let inputSurname = document.getElementById('surname');
 let inputName = document.getElementById('name');
 let inputPatronymic = document.getElementById('patronymic');
 let inputDateBorn = document.getElementById('date-born');
-let buttonAddData = document.getElementById('btn-add');
-let list = document.getElementById('list-cards');
+let buttonSaveData = document.getElementById('btn-save-card');
+let buttonOpenModal = document.getElementById('btn-open-modal');
+let listCards = document.getElementById('list-cards');
+let cards = document.querySelectorAll('card-member');
 
 let buttonClear = document.getElementById('clear');
 let selectIdParent = document.getElementById('select-id-parent');
 let formSelectParent = document.getElementById('form-select-parent');
 
-// const editTaskModalElement = document.getElementById('editTaskModal');
-// const editTaskModal = new bootstrap.Modal(editTaskModalElement);
-// const modalBody = document.getElementById('modal-body');
-// const modalTitle = document.querySelector('.modal-title');
+const editTaskModalElement = document.getElementById('editCardModal');
+const editTaskModal = new bootstrap.Modal(editTaskModalElement);
+const modalBody = document.getElementById('modal-body');
+const modalTitle = document.querySelector('.modal-title');
 
 
 let dataCardsFamily = [];
@@ -20,60 +22,73 @@ let dataCardsFamily = [];
 
 renderCardsFamily();
 
-// // Когда модальное окно закрыто стирается содержимое инпутов и ...
-// editTaskModalElement.addEventListener('hidden.bs.modal', (event) => {
-//     nameTask.value = '';
-//     infoTask.value = '';
-//     inputDate.value = '';
-//     modalBody.classList.remove('hidden');
-//     modalTitle.innerHTML = '';
-// });
+// Когда модальное окно закрыто стирается содержимое инпутов и ...
+editTaskModalElement.addEventListener('hidden.bs.modal', (event) => {
+    inputName.value = '';
+    inputSurname.value = '';
+    inputPatronymic.value = '';
+    inputDateBorn.value = '';
+    modalBody.classList.remove('hidden');
+    modalTitle.innerHTML = '';
+});
 
-// // Закрытие модального окна после ...
-// function closeEditModal() {
-//     const editTaskModalInstance = bootstrap.Modal.getInstance(editTaskModalElement);
-//     editTaskModalInstance.hide();
-// }
+// Закрытие модального окна после ...
+function closeEditModal() {
+    const editTaskModalInstance = bootstrap.Modal.getInstance(editTaskModalElement);
+    editTaskModalInstance.hide();
+}
 
-buttonAddData.addEventListener('click', (event) => {
+buttonOpenModal.addEventListener('click', (event) => {
+    event.stopImmediatePropagation();
     inputSurname.innerHTML = '';
     inputName.innerHTML = '';
     inputPatronymic.innerHTML = '';
+    editTaskModal.toggle();
+
+    let listener = function (event) {
+        
+        let newMember = {
+            surname: inputSurname.value,
+            name: inputName.value,
+            patronymic: inputPatronymic.value,
+            dateBorn: inputDateBorn.value,
+            parentId: selectIdParent.value
+        }
     
-    let newMember = {
-        surname: inputSurname.value,
-        name: inputName.value,
-        patronymic: inputPatronymic.value,
-        dateBorn: inputDateBorn.value,
-        parentId: selectIdParent.value
+        const options = {
+             method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json;charset=utf-8'
+                },
+                body: JSON.stringify(newMember)
+        }
+    
+        if(inputSurname !== '' && inputName !== '' && inputPatronymic !== '') {
+            fetch('http://localhost/treefamily/create', options)
+                    .then(response => response.json())
+                    .then((data) => {
+                        closeEditModal();
+                        dataCardsFamily.push(data);
+                        let html = document.createElement('div');
+                        html.className = 'card-member';
+                        html.id = `card-${data.id}`;
+                        html.innerHTML = templateWithoutDiv(data);
+                        listCards.append(html);
+                        addListenertsToCard(html);
+                        
+                        buttonSaveData.removeEventListener('click', listener);
+                    })
+                    .catch(error => console.error(error));
+    
+        }
     }
 
-    const options = {
-         method: 'POST',
-            headers: {
-                'Content-Type': 'application/json;charset=utf-8'
-            },
-            body: JSON.stringify(newMember)
-    }
-
-    if(inputSurname !== '' && inputName !== '' && inputPatronymic !== '') {
-        fetch('http://localhost/treefamily/create', options)
-                .then(response => response.json())
-                .then((result) => {
-                    
-                    dataCardsFamily.push(result);
-                    renderHtml();
-                    addEventListeners();
-                })
-                .catch(error => console.error(error));
-
-    }
+   buttonSaveData.addEventListener('click', listener);
 })
 
 const template = (item) => {
-    return `<div class='card-member' id='${item.id}'>${templateWithoutDiv(item)}</div>`;
+    return `<div class='card-member mt-2' data-card='${item.parent_id}' id='card-${item.id}'>${templateWithoutDiv(item)}</div>`;
 }
-
 
 const templateWithoutDiv = (item) => {
     return `<div class="card d-flex me-4" style="width: 18rem;">
@@ -97,56 +112,82 @@ function renderCardsFamily() {
    .then(response => response.json())
    .then(result => {
         dataCardsFamily = result;
+        console.log(result);
+
         renderHtml();
         addEventListeners();
    })
 }
 
+// sortparentChild();
+
+// function sortparentChild() {
+
+//     let sortArr = Object.keys
+
+
+// }
+
 function renderHtml() {
     dataCardsFamily.forEach(item => {
-        selectIdParent.append(new Option(item.id));
-        list.innerHTML += template(item);
+        //console.log(item.id);
+        let newOption = new Option(item.surname + ' ' + item.name + ' ' + item.patronymic, item.id);
+        selectIdParent.append(newOption);
+        
+        listCards.innerHTML += template(item);
     })
     
 }
 
+//Слушатели на все карточки
 function addEventListeners() {
     let cards = document.querySelectorAll('.card-member');
+    
+    // let dataCard = cards.getAttribute('data-card');
+    // console.log(dataCard);
+
     for( i = 0; i < cards.length; i++) {
         addListenertsToCard(cards[i]);
     }
 }
 
+// task-{id} => id Функция удаления префикса task из task-id
+const formattedCardId = (stringId) => {
+    return stringId.replace('card-', '');
+}
+
+//Слушатель на одну карточку
 function addListenertsToCard(cardElement) {
     const item = cardElement;
+    const divId = item.getAttribute('id');
     const btnDeleteCard = item.querySelector('.btn-delete');
+
     btnDeleteCard.addEventListener('click', event => {
-        console.log("hi");
+        
         event.stopImmediatePropagation();
+        const cardId = formattedCardId(divId);
+        
         const options = {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8'
             },
-
         }
-        fetch(`http://localhost/todolists/${taskId}`, options)
+        fetch(`http://localhost/treefamily/${cardId}`, options)
             .then(response => response.json())
             .then((data) => {
-                toastText.innerHTML = 'Задача удалена.';
-                toastTask.show();
-                closeEditModal();
-                removeTask(data.id, dataTasks.all, item);
-                
-                saveEdit.removeEventListener('click', listener);
+                item.remove();
             })
-
-
-
     })
+
+    // let dataCard = item.getAttribute('data-card');
+    // console.log(dataCard);
+
+
+
 };
 
-
+// Очистка 
 buttonClear.addEventListener('click', (event) => {
 
     const options = {
@@ -159,7 +200,6 @@ buttonClear.addEventListener('click', (event) => {
     fetch('http://localhost/treefamily', options)
         .then(response => response.json())
         .then(result => {
-
             dataCardsFamily = [];
         })
 });
@@ -173,3 +213,4 @@ buttonClear.addEventListener('click', (event) => {
         
 //     })
 // })
+
